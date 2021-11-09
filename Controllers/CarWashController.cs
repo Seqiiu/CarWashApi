@@ -2,6 +2,7 @@
 using CarWashApi.Models;
 using DataBase.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace CarWashApi.Controllers
         {
             var carWash = _carWashDb
                 .CarWashes
+                .Include(r=>r.Address)
                 .ToList();
 
             var carWashDtos = _mapper.Map<List<CarWashDto>>(carWash);
@@ -33,7 +35,7 @@ namespace CarWashApi.Controllers
         [HttpGet("{id}")]
         public ActionResult<CarWash> Get([FromRoute] int id)
         {
-            var carWash = _carWashDb.CarWashes.FirstOrDefault(r => r.Id == id);
+            var carWash = _carWashDb.CarWashes.Include(r => r.Address).FirstOrDefault(r => r.Id == id);
             if (carWash is null)
             {
                 return NotFound();
